@@ -15,6 +15,12 @@ Written by Limor Fried/Ladyada for Adafruit Industries.
 BSD license, all text above must be included in any redistribution
 **********************************************************/
 
+/*
+ * Enhanced for piezo speaker output
+ * Written by jforge.
+ * BSD license, all text above must be included in any redistribution
+ */
+ 
 #include <Wire.h>
 #include "Adafruit_MPR121.h"
 
@@ -26,13 +32,19 @@ Adafruit_MPR121 cap = Adafruit_MPR121();
 uint16_t lasttouched = 0;
 uint16_t currtouched = 0;
 
+// speaker 
+int speakerPin = 8;
+
 // create an array of notes
 // the numbers below correspond to
-// the frequencies of middle C, D, E, F and G
-int notes[] = {262, 294, 330, 349, 392};
+// the frequencies of middle C4, D, E, F, G, A, B, C5, D5, E5, F5
+int notes[] = {262, 294, 330, 349, 392, 440, 494, 523, 587, 659, 699};
 
 void setup() {
   Serial.begin(9600);
+
+  pinMode(speakerPin, OUTPUT);
+  pinMode(9, INPUT);
 
   while (!Serial) { // needed to keep leonardo/micro from starting too fast!
     delay(10);
@@ -52,36 +64,26 @@ void setup() {
 void loop() {
   // Get the currently touched pads
   currtouched = cap.touched();
-  
+
+  //int button = digitalRead(9);
+  //Serial.print(button);
+
   for (uint8_t i=0; i<12; i++) {
     // it if *is* touched and *wasnt* touched before, alert!
     if ((currtouched & _BV(i)) && !(lasttouched & _BV(i)) ) {
       Serial.print(i); Serial.println(" touched");
-      tone(8, notes[0]);
-      if (i == 0) {
-        // play the first frequency in the array on pin 8
-        tone(8, notes[0]);
-      } else if (i == 1) {
-        // play the second frequency in the array on pin 8
-        tone(8, notes[1]);
-      } else if (i == 2) {
-        // play the second frequency in the array on pin 8
-        tone(8, notes[2]);
-      } else if (i == 3) {
-        // play the third frequency in the array on pin 8
-        tone(8, notes[3]);
-      } else if (i == 4) {
-        // play the fourth frequency in the array on pin 8
-        tone(8, notes[4]);
+      if (i < 11) {
+        // play the frequency in the array on the speaker pin
+        tone(speakerPin, notes[i]);
       } else {
         // if the value is out of range, play no tone
-        noTone(8);
+        noTone(speakerPin);
       }
     }
     // if it *was* touched and now *isnt*, alert!
     if (!(currtouched & _BV(i)) && (lasttouched & _BV(i)) ) {
       Serial.print(i); Serial.println(" released");
-      noTone(8);
+      noTone(speakerPin);
     }
   }
 
