@@ -18,3 +18,8 @@ https://learn.adafruit.com/adafruit-mpr121-12-key-capacitive-touch-sensor-breako
 https://learn.adafruit.com/adafruit-mpr121-12-key-capacitive-touch-sensor-breakout-tutorial/wiring#download-adafruit-mpr121
 - Modify the MPR121 test sketch with this sketch
 - Wire the fruits and play
+
+
+## Other Resources
+
+- http://workshopweekend.net/arduino/projects/capacitive_keyboard
